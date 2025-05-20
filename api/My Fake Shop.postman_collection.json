@@ -1,0 +1,967 @@
+{
+	"info": {
+		"_postman_id": "d6032144-aa37-47e0-9d95-c7364623fdc9",
+		"name": "My Fake Shop",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26606973"
+	},
+	"item": [
+		{
+			"name": "open routes",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "admin@email.coms",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "0633719145",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "confirmPassword",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/open/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbXMiLCJwYXNzd29yZCI6IiQyYSQxMCRyS0NuNXlvbmN1ZWpBZmF6L3NSM0p1SHFra2VnLjN4MldnQy9iaUhIWkxDeWpLOGpaUTE4ZSIsInBob25lIjoiMDYzMzcxOTE0NSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczMDY2NjA5MiwiZXhwIjoxNzMwNjY2OTkyfQ.XpbE7rYgNgi_N8JD3ENXwyEZPZJWHgMX7qmHExqvPZE",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/open/verify-email",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"open",
+								"verify-email"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZ2Vvcmdpb3MiLCJlbWFpbCI6Imdpb3Jnb3MuYW1zdGVyZGFtQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJEVGaU1jQ08ySDlPNWxtR01GeXpNQ096RFRZLmVaTGdwMk5oWkQ3b2NrRXBaTFlZUGJOWGxlIiwicGhvbmUiOiIwNjMzNzE5MTQ2Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzE3NTg0NDgzLCJleHAiOjE3MTc1ODUwODN9.eauXyTFS3zm1Q-ZVqFSkvsM7qdpccZXJ0jPf_yDOEwg",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "admin@email.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/open/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Forget password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "admin@email.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/open/forget-password"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImlhdCI6MTcyOTc3MjgxNSwiZXhwIjoxNzI5NzczNzE1fQ.iU6TGHaPZG3xNR2tAFsOmidgfeDn44LyPBcH-tdQNXc",
+									"type": "text"
+								},
+								{
+									"key": "newPassword",
+									"value": "1234567",
+									"type": "text"
+								},
+								{
+									"key": "confirmNewPassword",
+									"value": "1234567",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/open/reset-password"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all products",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/open/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"open",
+								"products"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "samsung",
+									"disabled": true
+								},
+								{
+									"key": "pageNumber",
+									"value": "5",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get single product",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Airpods Wireless Bluetooth Headphones",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/open/products/6727e6e036304a404bbfbbc3"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all categories",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "tec",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/open/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Get single category",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "SMART phones",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/open/categories/671f619bbf5b4395494ab65a"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Guest or User",
+			"item": [
+				{
+					"name": "Add item to cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "qty",
+									"value": "2",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/products/67261bcdc4baf3f58d8f1d43"
+					},
+					"response": []
+				},
+				{
+					"name": "Place order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "qty",
+									"value": "2",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/products/order"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove item from cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "qty",
+									"value": "2",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/products/67260c7120390f8045c40f5b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"67260c7120390f8045c40f5b"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:3001/api/v1/products/cart"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "Logout user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "tsitsikaki.amsterdam@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/users/logout"
+					},
+					"response": []
+				},
+				{
+					"name": "Get user profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "georgios",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "giorgos.amsterdam@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "666666",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/users/profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Get orders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "georgios",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "giorgos.amsterdam@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "666666",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/users/orders"
+					},
+					"response": []
+				},
+				{
+					"name": "Get favorites",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "georgios",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "giorgos.amsterdam@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "666666",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/users/favorites"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete account",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:3001/api/v1/users/account"
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "oldPassword",
+									"value": "1234567",
+									"type": "text"
+								},
+								{
+									"key": "newPassword",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "confirmNewPassword",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "0633719147",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/sakat/Desktop/paok.jpg"
+								}
+							]
+						},
+						"url": "http://localhost:3001/api/v1/users/update-user"
+					},
+					"response": []
+				},
+				{
+					"name": "FavoriteProduct",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/add-favorite/67251fc45446c51e05d7f705",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"add-favorite",
+								"67251fc45446c51e05d7f705"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove favorite product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/delete-favorite/67212c616f383dcd4fdc75b6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"delete-favorite",
+								"67212c616f383dcd4fdc75b6"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:3001/api/v1/users/refresh-token",
+						"description": "\nThe `GET` request retrieves a new token for refreshing the user's session. The response is in JSON format and has the following schema:\n\n```json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"OK\": {\n      \"type\": \"boolean\"\n    },\n    \"message\": {\n      \"type\": \"string\"\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"newToken\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n```\n"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "User administration",
+					"item": [
+						{
+							"name": "Get all users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/v1/admin/users",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"admin",
+										"users"
+									],
+									"query": [
+										{
+											"key": "pageNumber",
+											"value": "17",
+											"disabled": true
+										},
+										{
+											"key": "keyword",
+											"value": "giorgos",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get user by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3001/api/v1/admin/users/6720bc515b9baf8044f6d4b7",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"v1",
+										"admin",
+										"users",
+										"6720bc515b9baf8044f6d4b7"
+									],
+									"query": [
+										{
+											"key": "pageNumber",
+											"value": "17",
+											"disabled": true
+										},
+										{
+											"key": "keyword",
+											"value": "giorgos",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Ban user",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": "http://localhost:3001/api/v1/admin/users/ban-user/6720bc515b9baf8044f6d4b7"
+							},
+							"response": []
+						},
+						{
+							"name": "Change user status",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "role",
+											"value": "user",
+											"type": "text"
+										}
+									]
+								},
+								"url": "http://localhost:3001/api/v1/admin/users/change-user-status/6720bc515b9baf8044f6d4b7"
+							},
+							"response": []
+						},
+						{
+							"name": "Unbann user",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": "http://localhost:3001/api/v1/admin/users/unbann-user/6720bc515b9baf8044f6d4b7"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User Account",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": "http://localhost:3001/api/v1/admin/users/6720bc515b9baf8044f6d4b7"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product administration",
+					"item": [
+						{
+							"name": "Delete Product",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": "http://localhost:3001/api/v1/admin/products/6720bc515b9baf8044f6d4c3"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "PAOKARA Ole",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "PAOK FC, based in Thessaloniki, Greece, is a prominent football club founded in 1926. Known for its passionate fanbase and historic rivalry with Olympiacos, the club has won multiple Greek Super League titles and Greek Cups.",
+											"type": "text"
+										},
+										{
+											"key": "brand",
+											"value": "Best",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "666",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "postman-cloud:///1eecbea2-2230-4410-a995-cf2953be4e09"
+										},
+										{
+											"key": "category",
+											"value": "electronics",
+											"type": "text"
+										}
+									]
+								},
+								"url": "http://localhost:3001/api/v1/admin/products"
+							},
+							"response": []
+						},
+						{
+							"name": "update product",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "paokara ole",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "666",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "/C:/Users/sakat/Desktop/FINAL/uploads/camera.jpg",
+											"disabled": true
+										}
+									]
+								},
+								"url": "http://localhost:3001/api/v1/admin/products/6727dd0b9d6be5ac8a339cbd"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Order administration",
+					"item": [
+						{
+							"name": "Get all orders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "http://localhost:3001/api/v1/admin/orders"
+							},
+							"response": []
+						},
+						{
+							"name": "Get single order",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "http://localhost:3001/api/v1/admin/orders/67261d6c5f8193224501cc16"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Category administration",
+					"item": [
+						{
+							"name": "Create category",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "name",
+											"value": "PAOK",
+											"type": "text"
+										}
+									]
+								},
+								"url": "http://localhost:3001/api/v1/admin/categories"
+							},
+							"response": []
+						},
+						{
+							"name": "Update category",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "name",
+											"value": "smart phones",
+											"type": "text"
+										},
+										{
+											"key": "newName",
+											"value": "smart tablets",
+											"type": "text"
+										},
+										{
+											"key": "is_discounted",
+											"value": "true",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": "http://localhost:3001/api/v1/admin/categories/6727e6e036304a404bbfbbc3"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete category",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": "http://localhost:3001/api/v1/admin/categories/67209ee6d17f9b212323de9a"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Seed data",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:3001/api/v1/seed"
+					},
+					"response": []
+				},
+				{
+					"name": "Clear cookies",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:3001/api/v1/seed/clear-cookie"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "API health check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3001/"
+			},
+			"response": []
+		}
+	]
+}
