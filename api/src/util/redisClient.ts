@@ -25,7 +25,7 @@ export const redisClient: RedisClientType = createClient({
     tls: false, // Disable TLS since Redis Cloud works without it
     connectTimeout: 10000,
     reconnectStrategy: (retries) => {
-      if (retries > 10) {
+      if (retries > 4) {
         logger.error('Redis max retries reached. Giving up...');
         return new Error('Redis max retries reached');
       }

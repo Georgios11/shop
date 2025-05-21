@@ -2,33 +2,25 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# Install only production dependencies first
 COPY api/package*.json ./
+RUN npm ci --only=production
 
-# First install connect-redis with correct version, then other dependencies
-RUN npm install connect-redis@7.1.0 --legacy-peer-deps && \
-    npm install --legacy-peer-deps && \
-    npm install --save-dev \
-    @types/swagger-ui-express \
-    @types/swagger-jsdoc \
-    @types/express@4.17.22 \
-    @types/node \
-    @types/cors \
-    @types/morgan \
-    @types/cookie-parser \
-    @types/express-session \
-    @types/passport \
-    @types/passport-local \
-    --legacy-peer-deps
-
+# Copy source files
 COPY api/ .
 
-# Build TypeScript to JavaScript
+# Build TypeScript
+RUN npm install typescript ts-node @types/node --save-dev
 RUN npm run build
 
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+# Remove dev dependencies to save space
+RUN npm prune --production
+
+# Set memory limit and other optimizations
+ENV NODE_OPTIONS="--max-old-space-size=512"
 ENV PORT=5000
 
 EXPOSE 5000
 
-# Run the compiled JavaScript instead of ts-node
+# Use the built files instead of ts-node
 CMD ["node", "dist/server.js"]
