@@ -9,8 +9,21 @@ RUN npm install --omit=dev
 # Copy source files
 COPY api/ .
 
-# Install dev dependencies only for build
-RUN npm install --save-dev typescript ts-node @types/node
+# Install dev dependencies including all type definitions
+RUN npm install --save-dev \
+    typescript \
+    ts-node \
+    @types/node \
+    @types/cookie-parser \
+    @types/cors \
+    @types/morgan \
+    @types/express-session \
+    @types/swagger-ui-express \
+    @types/express \
+    @types/passport \
+    @types/passport-local
+
+# Build TypeScript
 RUN npm run build
 
 # Remove dev dependencies to save space
