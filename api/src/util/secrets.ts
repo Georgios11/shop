@@ -26,10 +26,8 @@ export const CLOUDINARY_URL = process.env['CLOUDINARY_URL'] as string;
 export const smtpUsername = process.env['SMTP_USERNAME'] as string;
 export const smtpPassword = process.env['SMTP_PASSWORD'] as string;
 export const clientUrl = process.env['CLIENT_URL'] as string;
-// Use this instead if you want to use local mongodb
-// export const MONGODB_URI = (
-//   prod ? process.env['MONGODB_URI'] : process.env['MONGODB_URI_LOCAL']
-// ) as string
+export const redisUrlLocal = process.env['REDIS_URL_LOCAL'] as string;
+export const redisUrlCloud = process.env['REDIS_CLOUD_URL'] as string;
 
 if (!JWT_KEY) {
   logger.error('No client secret. Set JWT_SECRET environment variable.');
@@ -48,3 +46,22 @@ if (!MONGODB_URI) {
   }
   process.exit(1);
 }
+
+export const getRedisUrl = (): string => {
+  if (prod) {
+    if (!redisUrlCloud) {
+      logger.error(
+        'No Redis Cloud URL. Set REDIS_CLOUD_URL environment variable.'
+      );
+      process.exit(1);
+    }
+    return redisUrlCloud;
+  }
+
+  if (!redisUrlLocal) {
+    logger.warn('No local Redis URL. Using default: redis://localhost:6379');
+    return 'redis://localhost:6379';
+  }
+
+  return redisUrlLocal;
+};
