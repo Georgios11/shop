@@ -9,7 +9,7 @@ import { connectRedis } from './util/redisClient';
    only use in development
  */
 
-const port = process.env.PORT || 5000;
+const port = process.env.SERVER_PORT || 5000;
 
 // Start Express server
 app.listen(port, async () => {
