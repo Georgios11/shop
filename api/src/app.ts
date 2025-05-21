@@ -11,6 +11,8 @@ import { StatusCodes } from 'http-status-codes';
 import session from 'express-session';
 import passport from './config/passportConfig';
 import swaggerUi from 'swagger-ui-express';
+import RedisStore from 'connect-redis';
+import { redisClient } from './util/redisClient';
 
 //public
 
@@ -66,13 +68,15 @@ app.use(morgan('dev'));
 
 app.use(
   session({
+    store: new (RedisStore as any)({ client: redisClient }),
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true,
-      maxAge: 60 * 60 * 24,
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
     },
-    secret: 'secret',
   })
 );
 app.use(passport.initialize());
