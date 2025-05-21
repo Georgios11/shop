@@ -9,12 +9,16 @@ import { connectRedis } from './util/redisClient';
    only use in development
  */
 
+const port = process.env.PORT || 5000;
+
 // Start Express server
-app.listen(PORT, async () => {
+app.listen(port, async () => {
   await connectDB();
   await connectRedis();
   console.log(
-    `App is running at http://localhost:${PORT} in ${ENVIRONMENT} mode`
+    `App is running at http://localhost:${port} in ${
+      process.env.NODE_ENV || 'development'
+    } mode`
     // app.get('port'),
     // app.get('env')
   );
