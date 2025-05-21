@@ -2,19 +2,19 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install only production dependencies first
+# Install dependencies
 COPY api/package*.json ./
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 # Copy source files
 COPY api/ .
 
-# Build TypeScript
-RUN npm install typescript ts-node @types/node --save-dev
+# Install dev dependencies only for build
+RUN npm install --save-dev typescript ts-node @types/node
 RUN npm run build
 
 # Remove dev dependencies to save space
-RUN npm prune --production
+RUN npm prune --omit=dev
 
 # Set memory limit and other optimizations
 ENV NODE_OPTIONS="--max-old-space-size=512"
