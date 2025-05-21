@@ -22,7 +22,7 @@ logger.info(`Initializing Redis client at ${maskRedisUrl(redisUrl)}`);
 export const redisClient: RedisClientType = createClient({
   url: redisUrl,
   socket: {
-    tls: false,
+    tls: false, // Disable TLS since Redis Cloud works without it
     connectTimeout: 10000,
     reconnectStrategy: (retries) => {
       if (retries > 10) {
