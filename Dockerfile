@@ -2,31 +2,19 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install dependencies
+# Copy package files
 COPY api/package*.json ./
-RUN npm install --omit=dev
+
+# Install ALL dependencies (including dev) first
+RUN npm install
 
 # Copy source files
 COPY api/ .
 
-# Install dev dependencies including all type definitions
-RUN npm install --save-dev \
-    typescript \
-    ts-node \
-    @types/node \
-    @types/cookie-parser \
-    @types/cors \
-    @types/morgan \
-    @types/express-session \
-    @types/swagger-ui-express \
-    @types/express \
-    @types/passport \
-    @types/passport-local
-
-# Build TypeScript
+# Build TypeScript to JavaScript
 RUN npm run build
 
-# Remove dev dependencies to save space
+# Remove dev dependencies after build
 RUN npm prune --omit=dev
 
 # Set memory limit and other optimizations
@@ -35,5 +23,5 @@ ENV PORT=5000
 
 EXPOSE 5000
 
-# Use the built files instead of ts-node
+# Run the compiled JavaScript instead of ts-node
 CMD ["node", "dist/server.js"]
