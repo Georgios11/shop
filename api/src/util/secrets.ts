@@ -28,6 +28,7 @@ export const smtpPassword = process.env['SMTP_PASSWORD'] as string;
 export const clientUrl = process.env['CLIENT_URL'] as string;
 export const redisUrlLocal = process.env['REDIS_URL_LOCAL'] as string;
 export const redisUrlCloud = process.env['REDIS_CLOUD_URL'] as string;
+export const API_URL = process.env['API_URL'] as string;
 
 if (!JWT_KEY) {
   logger.error('No client secret. Set JWT_SECRET environment variable.');
@@ -64,4 +65,13 @@ export const getRedisUrl = (): string => {
   }
 
   return redisUrlLocal;
+};
+
+export const getDomain = () => {
+  if (ENVIRONMENT === 'production') {
+    // For production (Railway), extract domain from API_URL
+    // e.g., from "https://your-app.up.railway.app" to "your-app.up.railway.app"
+    return API_URL.replace(/^https?:\/\//, '');
+  }
+  return 'localhost'; // For development
 };

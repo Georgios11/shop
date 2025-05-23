@@ -27,6 +27,7 @@ import { calculateTotalPrice } from '../util/cartUtils';
 import { OrderDocument } from '../models/Order';
 import Order from '../models/Order';
 import Product from '../models/Product';
+import { getDomain } from '../util/secrets';
 
 /**
  * @openapi
@@ -92,12 +93,14 @@ export const logout = async (
       httpOnly: true,
       secure: true,
       sameSite: 'none',
+      domain: getDomain(),
     });
     res.clearCookie('refreshToken', {
       path: '/',
       httpOnly: true,
       secure: true,
       sameSite: 'none',
+      domain: getDomain(),
     });
 
     // Remove the user from the request object

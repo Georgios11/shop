@@ -8,7 +8,7 @@ import responseUtils from '../util/responseUtils';
 import { validateUser } from '../util/userUtils';
 import { createJWT, verifyJWT } from '../util/tokenUtils';
 import { encryptPassword } from '../util/passwordUtils';
-import { clientUrl } from '../util/secrets';
+import { clientUrl, getDomain } from '../util/secrets';
 import sendEmailWithNodeMailer from '../util/email';
 import { BadRequestError, NotFoundError } from '../errors/apiError';
 import User, { UserDocument } from '../models/User';
@@ -872,7 +872,7 @@ export const login = async (
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      domain: 'localhost', // Add domain for local development
+      domain: getDomain(), // Use the dynamic domain
     });
     // Log the cookie that will be sent in response
 
