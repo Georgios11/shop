@@ -32,7 +32,10 @@ import swaggerDocs from './swagger/swaggerUtils';
 
 dotenv.config({ path: '.env' });
 
-const publicPath = path.join(__dirname, 'example.txt');
+const publicPath =
+  process.env.NODE_ENV === 'production'
+    ? path.join(__dirname, '../public') // Proper public directory in production
+    : path.join(__dirname, 'example.txt');
 
 const app: Application = express();
 
@@ -42,20 +45,40 @@ app.set('port', process.env.SERVER_PORT);
 // Global middleware
 app.use(
   cors({
-    origin: [
-      'http://localhost:3000',
-      'http://172.18.160.1:5174',
-      'http://localhost:5174',
-      'http://192.168.178.157:5174',
-    ],
-    credentials: true, // Allow credentials
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? process.env.FRONTEND_URL || 'https://your-production-domain.com' // Ensure a default production URL
+        : [
+            'http://localhost:3000',
+            'http://172.18.160.1:5174',
+            'http://localhost:5174',
+            'http://192.168.178.157:5174',
+          ],
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
+// Production-specific middleware
 if (process.env.NODE_ENV === 'production') {
   app.use(rateLimiter);
+  // Add production logging
+  app.use(
+    morgan('combined', {
+      skip: (req, res) => res.statusCode < 400, // Only log errors
+      stream: {
+        write: (message) => {
+          // In production, you should use a proper logging service
+          console.error(message.trim());
+        },
+      },
+    })
+  );
+} else {
+  app.use(morgan('dev'));
 }
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(helmet());
@@ -64,18 +87,25 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(publicPath));
-app.use(morgan('dev'));
 
 app.use(
   session({
     store: new (RedisStore as any)({ client: redisClient }),
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    secret:
+      process.env.SESSION_SECRET ||
+      (() => {
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error('SESSION_SECRET must be set in production');
+        }
+        return 'your-secret-key';
+      })(),
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
     },
   })
 );
