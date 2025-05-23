@@ -63,14 +63,12 @@ app.use(
 // Production-specific middleware
 if (process.env.NODE_ENV === 'production') {
   app.use(rateLimiter);
-  // Add production logging
+  // Log all requests in production
   app.use(
     morgan('combined', {
-      skip: (req, res) => res.statusCode < 400, // Only log errors
       stream: {
         write: (message) => {
-          // In production, you should use a proper logging service
-          console.error(message.trim());
+          console.log(message.trim()); // Log everything to stdout
         },
       },
     })
