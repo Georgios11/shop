@@ -88,9 +88,9 @@ const insertUsers = async (): Promise<any[]> => {
       'users'
     );
     return await User.insertMany(usersWithCloudinaryUrls);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in insertUsers:', error);
-    throw new Error('Failed to process users: ' + error.message);
+    throw new Error('Failed to process users: ' + (error as Error).message);
   }
 };
 
@@ -107,12 +107,13 @@ const insertProducts = async (
       initialProducts.map((p) => ({ ...p, createdBy })),
       'products'
     );
-    return (await Product.insertMany(
+    const insertedProducts = await Product.insertMany(
       productsWithCloudinaryUrls
-    )) as unknown as ProductDocument[];
-  } catch (error) {
+    );
+    return insertedProducts as ProductDocument[];
+  } catch (error: unknown) {
     console.error('Error in insertProducts:', error);
-    throw new Error('Failed to process products: ' + error.message);
+    throw new Error('Failed to process products: ' + (error as Error).message);
   }
 };
 
@@ -147,7 +148,9 @@ const generateAndInsertCategories = async (
     categoriesMap.get(name).products.push(_id);
   });
 
-  return await Category.insertMany(Array.from(categoriesMap.values()));
+  return (await Category.insertMany(
+    Array.from(categoriesMap.values())
+  )) as unknown as CategoryDocument[];
 };
 
 /**
@@ -159,32 +162,31 @@ const generateAndInsertCategories = async (
 const mapCategoriesToProducts = async (
   products: ProductDocument[],
   categories: CategoryDocument[]
-): Promise<any[]> => {
-  // Create category map in a single pass
+): Promise<ProductDocument[]> => {
   const categoryMap = new Map(
     categories.flatMap((category) =>
       category.products.map((productId) => [productId.toString(), category._id])
     )
   );
 
-  // Prepare bulk update operations
-  const bulkOps = products.map((product) => ({
+  const bulkOps = products.map((product: ProductDocument) => ({
     updateOne: {
       filter: { _id: product._id },
       update: {
-        category: {
-          id: categoryMap.get(product._id.toString()),
-          name: product.category.name,
+        $set: {
+          category: {
+            id: categoryMap.get(product._id.toString()),
+            name: product.category.name,
+          },
         },
       },
     },
   }));
 
-  // Execute bulk update
   await Product.bulkWrite(bulkOps);
 
-  return products.map((product) => ({
-    ...product._doc,
+  return products.map((product: ProductDocument) => ({
+    ...product.toObject(),
     category: {
       id: categoryMap.get(product._id.toString()),
       name: product.category.name,

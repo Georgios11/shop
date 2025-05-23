@@ -21,7 +21,7 @@ import mongoose, { Document } from 'mongoose';
  * @property {Date} updatedAt - The date and time when the product was last updated. Automatically set by Mongoose.
  */
 export type ProductDocument = Document & {
-  map(arg0: (product: any) => any): unknown;
+  _id: mongoose.Types.ObjectId;
   name: string;
   price: number;
   brand: string;
