@@ -15,10 +15,10 @@ const port = PORT || 3001;
 app.listen(port, async () => {
   await connectDB();
   await connectRedis();
+  const host =
+    ENVIRONMENT === 'production' ? 'Railway' : `http://localhost:${port}`;
   console.log(
-    `App is running at http://localhost:${port} in ${
-      ENVIRONMENT || 'development'
-    } mode`
+    `App is running at ${host} in ${ENVIRONMENT || 'development'} mode`
     // app.get('port'),
     // app.get('env')
   );
