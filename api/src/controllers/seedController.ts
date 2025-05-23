@@ -251,12 +251,11 @@ export const seedData: RequestHandler = async (
   try {
     await deleteExistingData();
 
-    // Parallel user and product operations
-    const [users, admin] = await Promise.all([
-      insertUsers(),
-      User.findOne({ email: 'admin@email.com' }),
-    ]);
+    // First insert users and wait for it to complete
+    const users = await insertUsers();
 
+    // Then find the admin user
+    const admin = await User.findOne({ email: 'admin@email.com' });
     if (!admin) {
       throw new Error('Admin user not found during seeding');
     }
