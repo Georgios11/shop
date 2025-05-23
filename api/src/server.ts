@@ -17,7 +17,7 @@ app.listen(port, async () => {
   await connectRedis();
   console.log(
     `App is running at http://localhost:${port} in ${
-      process.env.NODE_ENV || 'development'
+      ENVIRONMENT || 'development'
     } mode`
     // app.get('port'),
     // app.get('env')

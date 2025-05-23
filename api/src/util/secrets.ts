@@ -14,7 +14,7 @@ if (fs.existsSync('.env')) {
 
 export const ENVIRONMENT = process.env.NODE_ENV;
 const prod = ENVIRONMENT === 'production'; // Anything else is treated as 'dev'
-export const PORT = process.env.SERVER_PORT;
+export const PORT = process.env.PORT;
 export const JWT_KEY = process.env['JWT_KEY'] as string;
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as string;
 export const REFRESH_JWT_EXPIRES_IN = process.env
