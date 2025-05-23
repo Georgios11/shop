@@ -28,23 +28,21 @@ import cloudinary from '../util/cloudinary';
  */
 const deleteExistingData = async () => {
   try {
-    // First, get all products and users to delete their Cloudinary images
+    // Parallel fetch of products and users
     const [products, users] = await Promise.all([Product.find(), User.find()]);
 
-    // Delete all product and user images from Cloudinary
+    // Batch Cloudinary deletions
     const cloudinaryDeletions = [
-      ...products
-        .filter((product) => product.imagePublicId)
-        .map((product) => cloudinary.uploader.destroy(product.imagePublicId)),
-      ...users
-        .filter((user) => user.imagePublicId)
-        .map((user) => cloudinary.uploader.destroy(user.imagePublicId)),
+      ...products.filter((p) => p.imagePublicId).map((p) => p.imagePublicId),
+      ...users.filter((u) => u.imagePublicId).map((u) => u.imagePublicId),
     ];
 
-    // Wait for all Cloudinary deletions to complete
-    await Promise.all(cloudinaryDeletions);
+    // Single batch delete for Cloudinary
+    if (cloudinaryDeletions.length > 0) {
+      await cloudinary.api.delete_resources(cloudinaryDeletions);
+    }
 
-    // Delete documents from MongoDB
+    // Parallel database operations
     await Promise.all([
       Category.deleteMany(),
       User.deleteMany(),
@@ -58,49 +56,41 @@ const deleteExistingData = async () => {
   }
 };
 
+// Optimize image uploads by batching
+const uploadImagesToCloudinary = async (items: any[], folder: string) => {
+  const uploadPromises = items.map(async (item) => {
+    if (!item.image) return item;
+
+    try {
+      const result = await uploadImageToCloudinary(item.image, folder);
+      return {
+        ...item,
+        image: result.secure_url,
+        imagePublicId: result.public_id,
+      };
+    } catch (error) {
+      console.error(`Failed to upload image for ${item.name}:`, error);
+      return { ...item, image: item.image };
+    }
+  });
+
+  return Promise.all(uploadPromises);
+};
+
 /**
  * Inserts initial users into the database.
  * @returns {Array} - Inserted users.
  */
 const insertUsers = async (): Promise<any[]> => {
   try {
-    const uploadPromises = initialUsers.map(async (user) => {
-      try {
-        if (!user.image) {
-          return user;
-        }
-
-        // Upload user image to Cloudinary
-        const result = await uploadImageToCloudinary(user.image, 'users');
-
-        return {
-          ...user,
-          image: result.secure_url,
-          imagePublicId: result.public_id,
-        };
-      } catch (error: unknown) {
-        const err = error as Error;
-        console.error(
-          `Failed to upload image for user ${user.name}:`,
-          err.message,
-          '\nImage URL:',
-          user.image
-        );
-        // If upload fails, use the original image URL
-        return {
-          ...user,
-          image: user.image,
-        };
-      }
-    });
-
-    const usersWithCloudinaryUrls = await Promise.all(uploadPromises);
-    const insertedUsers = await User.insertMany(usersWithCloudinaryUrls);
-    return insertedUsers;
-  } catch (error: unknown) {
-    const err = error as Error;
-    console.error('Error in insertUsers:', err.message);
-    throw new Error('Failed to process users: ' + err.message);
+    const usersWithCloudinaryUrls = await uploadImagesToCloudinary(
+      initialUsers,
+      'users'
+    );
+    return await User.insertMany(usersWithCloudinaryUrls);
+  } catch (error) {
+    console.error('Error in insertUsers:', error);
+    throw new Error('Failed to process users: ' + error.message);
   }
 };
 
@@ -113,43 +103,16 @@ const insertProducts = async (
   createdBy: ObjectId
 ): Promise<ProductDocument[]> => {
   try {
-    const uploadPromises = initialProducts.map(async (product) => {
-      try {
-        // Use the utility function instead of direct cloudinary upload
-        const result = await uploadImageToCloudinary(product.image);
-
-        return {
-          ...product,
-          createdBy,
-          image: result.secure_url,
-          imagePublicId: result.public_id, // Store the Cloudinary public ID
-        };
-      } catch (error: unknown) {
-        const err = error as Error;
-        console.error(
-          `Failed to upload image for ${product.name}:`,
-          err.message,
-          '\nImage URL:',
-          product.image
-        );
-        // If upload fails, use the original image URL
-        return {
-          ...product,
-          createdBy,
-          image: product.image,
-        };
-      }
-    });
-
-    const productsWithCloudinaryUrls = await Promise.all(uploadPromises);
-    const insertedProducts = await Product.insertMany(
-      productsWithCloudinaryUrls
+    const productsWithCloudinaryUrls = await uploadImagesToCloudinary(
+      initialProducts.map((p) => ({ ...p, createdBy })),
+      'products'
     );
-    return insertedProducts as unknown as ProductDocument[];
-  } catch (error: unknown) {
-    const err = error as Error;
-    console.error('Error in insertProducts:', err.message);
-    throw new Error('Failed to process products: ' + err.message);
+    return (await Product.insertMany(
+      productsWithCloudinaryUrls
+    )) as unknown as ProductDocument[];
+  } catch (error) {
+    console.error('Error in insertProducts:', error);
+    throw new Error('Failed to process products: ' + error.message);
   }
 };
 
@@ -162,30 +125,29 @@ const insertProducts = async (
 const generateAndInsertCategories = async (
   products: ProductDocument[],
   createdBy: ObjectId
-): Promise<any[]> => {
+): Promise<CategoryDocument[]> => {
   const categoriesMap = new Map();
 
+  // Single pass through products
   products.forEach((product) => {
     const {
-      category: { name: categoryName },
-      _id: productId,
+      category: { name },
+      _id,
     } = product;
+    const slug = slugify(name, { lower: true });
 
-    const slug = slugify(categoryName, { lower: true });
-    if (!categoriesMap.has(categoryName)) {
-      categoriesMap.set(categoryName, {
-        name: categoryName,
+    if (!categoriesMap.has(name)) {
+      categoriesMap.set(name, {
+        name,
         createdBy,
         products: [],
         slug,
       });
     }
-    categoriesMap.get(categoryName).products.push(productId);
+    categoriesMap.get(name).products.push(_id);
   });
 
-  const createdCategories = Array.from(categoriesMap.values());
-  const categories = await Category.insertMany(createdCategories);
-  return categories;
+  return await Category.insertMany(Array.from(categoriesMap.values()));
 };
 
 /**
@@ -198,28 +160,36 @@ const mapCategoriesToProducts = async (
   products: ProductDocument[],
   categories: CategoryDocument[]
 ): Promise<any[]> => {
-  const categoryMap = new Map();
-  categories.forEach((category) => {
-    category.products.forEach((productId) => {
-      categoryMap.set(productId.toString(), category._id);
-    });
-  });
-
-  const updatedProducts = products.map((product: any) => {
-    const categoryId = categoryMap.get(product._id.toString());
-    return {
-      ...product._doc, // Spread the document fields
-      category: { id: categoryId, name: product.category.name },
-    };
-  });
-
-  await Promise.all(
-    updatedProducts.map((product: any) =>
-      Product.updateOne({ _id: product._id }, { category: product.category })
+  // Create category map in a single pass
+  const categoryMap = new Map(
+    categories.flatMap((category) =>
+      category.products.map((productId) => [productId.toString(), category._id])
     )
   );
 
-  return updatedProducts;
+  // Prepare bulk update operations
+  const bulkOps = products.map((product) => ({
+    updateOne: {
+      filter: { _id: product._id },
+      update: {
+        category: {
+          id: categoryMap.get(product._id.toString()),
+          name: product.category.name,
+        },
+      },
+    },
+  }));
+
+  // Execute bulk update
+  await Product.bulkWrite(bulkOps);
+
+  return products.map((product) => ({
+    ...product._doc,
+    category: {
+      id: categoryMap.get(product._id.toString()),
+      name: product.category.name,
+    },
+  }));
 };
 
 /**
@@ -277,58 +247,47 @@ export const seedData: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    // Delete existing data, except admin who made seed request
     await deleteExistingData();
 
-    // early return for testing purposes
-    // return successResponse(res, StatusCodes.OK, "Hydration");
+    // Parallel user and product operations
+    const [users, admin] = await Promise.all([
+      insertUsers(),
+      User.findOne({ email: 'admin@email.com' }),
+    ]);
 
-    // Insert users and create products with user associations
-    const users = await insertUsers();
-
-    await setCacheKey('users', users);
-
-    //get admin id
-    // const createdBy = userId;
-    const admin = await User.findOne({ email: 'admin@email.com' });
     if (!admin) {
       throw new Error('Admin user not found during seeding');
     }
+
     const products = await insertProducts(new ObjectId(admin._id));
-    //initialize guest  cache
 
-    //initialize order cache
-    const orders = await Order.find();
-    await setCacheKey('orders', orders);
+    // Parallel category operations and cache updates
+    const [categories, orders] = await Promise.all([
+      generateAndInsertCategories(products, new ObjectId(admin._id)),
+      Order.find(),
+    ]);
 
-    // Generate and insert categories
-    const categories = await generateAndInsertCategories(
-      products as ProductDocument[],
-      new ObjectId(admin._id)
-    );
-    await setCacheKey('categories', categories);
+    const finalProducts = await mapCategoriesToProducts(products, categories);
 
-    const finalProducts = await mapCategoriesToProducts(
-      products as ProductDocument[],
-      categories as CategoryDocument[]
-    );
-    await setCacheKey('products', finalProducts);
+    // Batch cache updates
+    await Promise.all([
+      setCacheKey('users', users),
+      setCacheKey('categories', categories),
+      setCacheKey('products', finalProducts),
+      setCacheKey('orders', orders),
+    ]);
 
-    if (!users || !categories || !finalProducts) {
-      throw new Error('There was a problem initializing the database');
-    }
-    // Log out the user if they are logged in
-    for (const cookieName in req.cookies) {
-      // Clear each cookie
+    // Clear cookies and user session
+    Object.keys(req.cookies).forEach((cookieName) => {
       res.clearCookie(cookieName, {
         path: '/',
         httpOnly: true,
         secure: true,
         sameSite: 'none',
       });
-    }
+    });
     delete req.user;
-    // Return success response
+
     responseUtils.successResponse(res, StatusCodes.OK, 'Database hydrated');
   } catch (error) {
     responseUtils.errorResponse(error, next);
