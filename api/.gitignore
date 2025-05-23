@@ -39,3 +39,8 @@ dist/**/*
 
 *.swo
 *.swp
+
+# Redis
+dump.rdb
+*.rdb
+redis-data/

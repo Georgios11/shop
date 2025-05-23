@@ -13,7 +13,7 @@ import passport from './config/passportConfig';
 import swaggerUi from 'swagger-ui-express';
 import RedisStore from 'connect-redis';
 import { redisClient } from './util/redisClient';
-
+import { ENVIRONMENT } from './util/secrets';
 //public
 
 import path from 'path';
@@ -31,11 +31,10 @@ import { authorizeAdmin, authorizeUser } from './middlewares/authMiddleware';
 import swaggerDocs from './swagger/swaggerUtils';
 
 dotenv.config({ path: '.env' });
-
-const publicPath =
-  process.env.NODE_ENV === 'production'
-    ? path.join(__dirname, '../public') // Proper public directory in production
-    : path.join(__dirname, 'example.txt');
+const production = ENVIRONMENT === 'production';
+const publicPath = production
+  ? path.join(__dirname, '../public') // Proper public directory in production
+  : path.join(__dirname, 'example.txt');
 
 const app: Application = express();
 
@@ -45,15 +44,14 @@ app.set('port', process.env.SERVER_PORT);
 // Global middleware
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? process.env.FRONTEND_URL || 'https://your-production-domain.com' // Ensure a default production URL
-        : [
-            'http://localhost:3000',
-            'http://172.18.160.1:5174',
-            'http://localhost:5174',
-            'http://192.168.178.157:5174',
-          ],
+    origin: production
+      ? process.env.FRONTEND_URL || 'https://your-production-domain.com' // Ensure a default production URL
+      : [
+          'http://localhost:3000',
+          'http://172.18.160.1:5174',
+          'http://localhost:5174',
+          'http://192.168.178.157:5174',
+        ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -61,7 +59,7 @@ app.use(
 );
 
 // Production-specific middleware
-if (process.env.NODE_ENV === 'production') {
+if (production) {
   app.use(rateLimiter);
   // Log all requests in production
   app.use(
@@ -92,7 +90,7 @@ app.use(
     secret:
       process.env.SESSION_SECRET ||
       (() => {
-        if (process.env.NODE_ENV === 'production') {
+        if (production) {
           throw new Error('SESSION_SECRET must be set in production');
         }
         return 'your-secret-key';
@@ -100,10 +98,10 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: production,
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      sameSite: production ? 'strict' : 'lax',
     },
   })
 );
